@@ -1,41 +1,20 @@
 <?php
 class Modelo {
-    private $conexion;
-
+    private $db;
     public function __construct() {
-        // Conexión a la base de datos examen_mvc
-        $this->conexion = new mysqli("localhost", "root", "", "examen_mvc");
-        if ($this->conexion->connect_error) {
-            die("Error de conexión: " . $this->conexion->connect_error);
-        }
+        $this->db = new mysqli("localhost", "root", "", "examen_mvc");
     }
-
-    public function insertar($nombre, $precio) {
-        $stmt = $this->conexion->prepare("INSERT INTO productos (nombre, precio) VALUES (?, ?)");
-        $stmt->bind_param("sd", $nombre, $precio);
-        return $stmt->execute();
+    public function insertar($n, $p) {
+        $this->db->query("INSERT INTO productos (nombre, precio) VALUES ('$n', $p)");
     }
-
     public function mostrar() {
-        $resultado = $this->conexion->query("SELECT * FROM productos");
-        $productos = [];
-        while ($fila = $resultado->fetch_assoc()) {
-            $productos[] = $fila;
-        }
-        return $productos;
+        return $this->db->query("SELECT * FROM productos")->fetch_all(MYSQLI_ASSOC);
     }
-
     public function eliminar($id) {
-        $stmt = $this->conexion->prepare("DELETE FROM productos WHERE id = ?");
-        $stmt->bind_param("i", $id);
-        return $stmt->execute();
+        $this->db->query("DELETE FROM productos WHERE id = $id");
     }
-    
-    // Método extra para cumplir con la prueba de edición del Ejercicio 6
-    public function editar($id, $nombre, $precio) {
-        $stmt = $this->conexion->prepare("UPDATE productos SET nombre=?, precio=? WHERE id=?");
-        $stmt->bind_param("sdi", $nombre, $precio, $id);
-        return $stmt->execute();
+    public function editar($id, $n, $p) {
+        $this->db->query("UPDATE productos SET nombre='$n', precio=$p WHERE id=$id");
     }
 }
 ?>
